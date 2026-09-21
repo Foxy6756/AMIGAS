@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ramo de Lirios</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 24%, #74617e 0%, #3e344e 42%, #211c2d 100%);
+      overflow: hidden;
+      user-select: none;
+      pointer-events: none; /* Desactiva cualquier interacción */
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      color: #f9dce8;
+      opacity: .48;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    body::before { content: '✦'; top: 12%; left: 10%; }
+    body::after { content: '✿'; right: 10%; bottom: 12%; animation-delay: 1.7s; }
+
+    .message {
+      position: fixed;
+      top: clamp(18px, 5vh, 42px);
+      left: 50%;
+      z-index: 20;
+      width: min(88vw, 420px);
+      transform: translateX(-50%);
+      color: #fff8fb;
+      font: 600 clamp(.78rem, 2vw, .95rem)/1.4 Georgia, serif;
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 2px 12px #1d142b;
+    }
+
+    .bouquet-wrapper {
+      position: relative;
+      width: min(420px, 92vw);
+      height: min(580px, 78vh);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.55));
+      animation: bouquet-sway 7s ease-in-out infinite;
+      transform-origin: 50% 100%;
+    }
+
+    .bouquet-wrapper::before {
+      content: '';
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      width: 270px;
+      height: 34px;
+      border-radius: 50%;
+      background: #120d1c99;
+      filter: blur(14px);
+      transform: translateX(-50%);
+    }
+
+    /* --- Tallos --- */
+    .stem {
+      position: absolute;
+      bottom: 40px;
+      width: 9px;
+      height: 290px;
+      background: linear-gradient(to right, #244626, #417345, #1d381f);
+      border-radius: 6px;
+      transform-origin: bottom center;
+    }
+
+    .stem-1 { transform: rotate(-16deg); height: 320px; left: 195px; }
+    .stem-2 { transform: rotate(-5deg); height: 340px; left: 206px; }
+    .stem-3 { transform: rotate(14deg); height: 310px; left: 216px; }
+    .stem-4 { transform: rotate(-26deg); height: 260px; left: 190px; }
+    .stem-5 { transform: rotate(24deg); height: 270px; left: 220px; }
+
+    /* --- Hojas alargadas típicas del lirio --- */
+    .foliage {
+      position: absolute;
+      width: 22px;
+      height: 160px;
+      background: linear-gradient(135deg, #2b542c 0%, #467948 60%, #1e3d20 100%);
+      border-radius: 50% 50% 10% 10% / 80% 80% 20% 20%;
+      transform-origin: bottom center;
+      box-shadow: inset 1px 0 2px rgba(255,255,255,0.2);
+      animation: leaf-breathe 4s ease-in-out infinite;
+    }
+
+    .leaf-1 { bottom: 170px; left: 130px; transform: rotate(-48deg) scaleY(1.1); }
+    .leaf-2 { bottom: 160px; right: 130px; transform: rotate(45deg) scaleY(1.1); }
+    .leaf-3 { bottom: 200px; left: 160px; transform: rotate(-28deg) scaleY(0.9); }
+    .leaf-4 { bottom: 190px; right: 155px; transform: rotate(32deg) scaleY(0.95); }
+
+    /* --- Estructura de la flor (Lirio) --- */
+    .lily {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      animation: flower-breathe 4.5s ease-in-out infinite;
+    }
+
+    .lily-center {
+      top: 100px;
+      left: 140px;
+      transform: scale(1.1);
+      z-index: 5;
+    }
+
+    .lily-left {
+      top: 170px;
+      left: 60px;
+      transform: rotate(-22deg) scale(0.95);
+      z-index: 4;
+    }
+
+    .lily-right {
+      top: 165px;
+      right: 60px;
+      transform: rotate(20deg) scale(0.95);
+      z-index: 4;
+    }
+
+    .lily-bottom {
+      top: 225px;
+      left: 140px;
+      transform: rotate(2deg) scale(1);
+      z-index: 6;
+    }
+
+    /* Pétalos del lirio: alargados, curvados y con tinte central suave */
+    .petal {
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 16px);
+      width: 32px;
+      height: 86px;
+      background: radial-gradient(ellipse at center bottom, #e8a7c2 0%, #fff9fb 42%, #ffffff 100%);
+      border-radius: 50% 50% 25% 25% / 70% 70% 30% 30%;
+      transform-origin: bottom center;
+      box-shadow: inset 0 -12px 10px rgba(220, 148, 184, 0.35), 0 3px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Nervadura central sutil */
+    .petal::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1.5px;
+      height: 60%;
+      background: rgba(194, 104, 151, 0.42);
+      border-radius: 1px;
+    }
+
+    .p1 { transform: rotate(0deg) translateY(-8px); }
+    .p2 { transform: rotate(60deg) translateY(-8px); }
+    .p3 { transform: rotate(120deg) translateY(-8px); }
+    .p4 { transform: rotate(180deg) translateY(-8px); }
+    .p5 { transform: rotate(240deg) translateY(-8px); }
+    .p6 { transform: rotate(300deg) translateY(-8px); }
+
+    /* Pistilo y estambres con polen marrón/dorado característico */
+    .pistil-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      background: #7ca352;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 7;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    .stamen {
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 1px);
+      width: 2px;
+      height: 28px;
+      background: #9abf67;
+      transform-origin: bottom center;
+      z-index: 6;
+    }
+
+    .stamen::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -3.5px;
+      width: 9px;
+      height: 4px;
+      background: #8b3e1b; /* Anteras con polen */
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .s1 { transform: rotate(30deg); }
+    .s2 { transform: rotate(90deg); }
+    .s3 { transform: rotate(150deg); }
+    .s4 { transform: rotate(210deg); }
+    .s5 { transform: rotate(270deg); }
+    .s6 { transform: rotate(330deg); }
+
+    /* --- Lazo de satén que ata el ramo --- */
+    .ribbon {
+      position: absolute;
+      bottom: 115px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .paper {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      z-index: 7;
+      width: 230px;
+      height: 220px;
+      background: linear-gradient(115deg, #f8d9c7, #dba9a3 56%, #9f7181);
+      clip-path: polygon(7% 0, 93% 0, 78% 100%, 22% 100%);
+      opacity: .95;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 8px 5px #150d1b88);
+    }
+
+    .paper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: .2;
+      background: repeating-linear-gradient(105deg, transparent 0 14px, #fff 15px 16px);
+    }
+
+    .ribbon-knot {
+      width: 26px;
+      height: 20px;
+      background: #d8c3a5;
+      border-radius: 6px;
+      margin: 0 auto;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.35);
+    }
+
+    .ribbon-loop-left, .ribbon-loop-right {
+      position: absolute;
+      top: -6px;
+      width: 36px;
+      height: 28px;
+      border: 5px solid #d8c3a5;
+      border-radius: 50% 20% 50% 20%;
+    }
+
+    .ribbon-loop-left {
+      right: 14px;
+      transform: rotate(-25deg);
+    }
+
+    .ribbon-loop-right {
+      left: 14px;
+      transform: rotate(25deg) scaleX(-1);
+    }
+
+    .ribbon-tail-left, .ribbon-tail-right {
+      position: absolute;
+      top: 14px;
+      width: 10px;
+      height: 70px;
+      background: linear-gradient(to bottom, #d8c3a5, #bfaa8e);
+      border-radius: 2px;
+    }
+
+    .ribbon-tail-left {
+      left: 2px;
+      transform: rotate(18deg);
+    }
+
+    .ribbon-tail-right {
+      right: 2px;
+      transform: rotate(-16deg);
+    }
+
+    @keyframes float { 50% { transform: translateY(-14px) rotate(8deg); } }
+    @keyframes bouquet-sway {
+      50% { transform: rotate(1deg) translateY(-5px); }
+    }
+    @keyframes leaf-breathe {
+      50% { margin-top: -3px; }
+    }
+    @keyframes flower-breathe {
+      50% { filter: brightness(1.05); }
+    }
+
+    @media (max-width: 520px) {
+      .bouquet-wrapper { height: min(540px, 76vh); }
+      .lily { transform: scale(.86); }
+      .lily-center { transform: scale(.94); }
+      .lily-left { left: 38px; }
+      .lily-right { right: 38px; }
+      .paper { width: 205px; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="message">Un ramo de lirios para iluminar tu día ✦</div>
+
+  <div class="bouquet-wrapper">
+    <!-- Tallos -->
+    <div class="stem stem-1"></div>
+    <div class="stem stem-2"></div>
+    <div class="stem stem-3"></div>
+    <div class="stem stem-4"></div>
+    <div class="stem stem-5"></div>
+
+    <!-- Hojas -->
+    <div class="foliage leaf-1"></div>
+    <div class="foliage leaf-2"></div>
+    <div class="foliage leaf-3"></div>
+    <div class="foliage leaf-4"></div>
+
+    <div class="paper" aria-hidden="true"></div>
+
+    <!-- Flor Superior Central -->
+    <div class="lily lily-center">
+      <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
+      <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
+      <div class="stamen s1"></div><div class="stamen s2"></div><div class="stamen s3"></div>
+      <div class="stamen s4"></div><div class="stamen s5"></div><div class="stamen s6"></div>
+      <div class="pistil-core"></div>
+    </div>
+
+    <!-- Flor Izquierda -->
+    <div class="lily lily-left">
+      <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
+      <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
+      <div class="stamen s1"></div><div class="stamen s2"></div><div class="stamen s3"></div>
+      <div class="stamen s4"></div><div class="stamen s5"></div><div class="stamen s6"></div>
+      <div class="pistil-core"></div>
+    </div>
+
+    <!-- Flor Derecha -->
+    <div class="lily lily-right">
+      <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
+      <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
+      <div class="stamen s1"></div><div class="stamen s2"></div><div class="stamen s3"></div>
+      <div class="stamen s4"></div><div class="stamen s5"></div><div class="stamen s6"></div>
+      <div class="pistil-core"></div>
+    </div>
+
+    <!-- Flor Frontal Inferior -->
+    <div class="lily lily-bottom">
+      <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
+      <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
+      <div class="stamen s1"></div><div class="stamen s2"></div><div class="stamen s3"></div>
+      <div class="stamen s4"></div><div class="stamen s5"></div><div class="stamen s6"></div>
+      <div class="pistil-core"></div>
+    </div>
+
+    <!-- Lazo decorativo -->
+    <div class="ribbon">
+      <div class="ribbon-loop-left"></div>
+      <div class="ribbon-loop-right"></div>
+      <div class="ribbon-knot"></div>
+      <div class="ribbon-tail-left"></div>
+      <div class="ribbon-tail-right"></div>
+    </div>
+  </div>
+
+</body>
+</html>
